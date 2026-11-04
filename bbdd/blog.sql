@@ -1,27 +1,28 @@
 SET NAMES utf8mb4;
+
+CREATE DATABASE IF NOT EXISTS blog;
+USE blog;
+
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS autor;
 
-CREATE DATABASE blog;
-   USE blog;
-   
 CREATE TABLE autor (
-     id      INT AUTO_INCREMENT PRIMARY KEY,
-     nombre  VARCHAR(100) NOT NULL,
-     email   VARCHAR(100) NOT NULL UNIQUE,
-     imagen  VARCHAR(255)
+      id      INT AUTO_INCREMENT PRIMARY KEY,
+      nombre  VARCHAR(100) NOT NULL,
+      email   VARCHAR(100) NOT NULL UNIQUE,
+      imagen  VARCHAR(255)
    );
    
 CREATE TABLE post (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(255) NOT NULL,
-    descripcion TEXT NOT NULL,
-    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    categoria VARCHAR(100) NOT NULL,
-    autor_id INT NOT NULL,
-    FOREIGN KEY (autor_id) REFERENCES autor(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      titulo VARCHAR(255) NOT NULL,
+      descripcion TEXT NOT NULL,
+      fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+      categoria VARCHAR(100) NOT NULL,
+      autor_id INT NOT NULL,
+      FOREIGN KEY (autor_id) REFERENCES autor(id)
+         ON DELETE CASCADE
+         ON UPDATE CASCADE
 );
 
 INSERT INTO autor (nombre, email, imagen) VALUES

@@ -1,8 +1,8 @@
 {
-  "name": "express-init-template",
-  "version": "2.0.0",
+  "name": "act8_api_blog",
+  "version": "1.0.0",
   "type": "module",
-  "description": "This is a basic Express application template designed to help you create APIs quickly. It includes essential configurations and setup for starting an Express server.",
+  "description": "Actividad 8 - API para gestionar los posts y autores de un Blog con Express y MySQL.",
   "main": "index.js",
   "engines": {
     "node": ">=22.9"
@@ -16,8 +16,8 @@
     "init",
     "template"
   ],
-  "author": "Mario Girón Martín",
-  "license": "MIT",
+  "author": "Javier Núñez García-Bueno",
+  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.0.0",
