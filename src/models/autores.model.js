@@ -8,7 +8,7 @@ const selectAll = async () => {
 const selectById = async (id) => {
     const [resultado] = await db.execute('SELECT * FROM autor WHERE id = ?', [id]);
     if (resultado.length === 0) {
-        throw new Error('Autor not found');
+        return null;
     }
     return resultado[0];
 }

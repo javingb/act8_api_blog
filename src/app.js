@@ -1,6 +1,7 @@
 // Creation and configuration of the Express APP
 import express from "express";
 import cors from "cors";
+import apiRoutes from "./routes/api.routes.js";
 
 
 const app = express();

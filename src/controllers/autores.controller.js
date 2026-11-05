@@ -1,3 +1,4 @@
+import { insert, selectAll, selectById } from "../models/autores.model.js";
 
 const getAll = async (req, res) => { 
     const autores = await selectAll();
@@ -15,7 +16,7 @@ const create = async (req, res) => {
         res.status(201).json(autor);
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
-            res.status(400).json({ message: 'Duplicate entry' });
+            return res.status(400).json({ message: 'El email ya está registrado' });
         }
         throw error;
     }
