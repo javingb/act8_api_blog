@@ -1,29 +1,134 @@
-// Requests to test the API from VS Code (REST Client extension)
+// Variable con la URL base: {{baseUrl}} se sustituye por este valor
 @baseUrl = http://localhost:3000
 
+###############
+# API AUTORES #
+###############
+
 ### GET autores
+# Recupera todos los autores de la tabla autor.
+# Ruta: autores.routes -> getAll -> selectAll
+# Respuesta esperada: 200 con un array de autores
 GET {{baseUrl}}/api/autores
 
 ### GET autor by ID
+# Recupera un único autor a partir de su id en la URL (:idAutor = 2).
+# El middleware comprobarId busca el autor y lo guarda en req.autor.
+# Respuesta esperada: 200 con el objeto del autor
 GET {{baseUrl}}/api/autores/2
 
 ### GET autor que no existe -> 404
+# Comprueba que el middleware comprobarId corta la petición
+# cuando el id no existe en la base de datos.
+# Respuesta esperada: 404 con { message: 'No existe el autor con ese id' }
 GET {{baseUrl}}/api/autores/999
 
 ### POST nuevo autor
+# Crea un autor nuevo con los datos del body (JSON).
+# validarAutor comprueba que llegan nombre y email (imagen es opcional).
+# El controller hace el INSERT y devuelve el autor creado con su nuevo id.
+# Respuesta esperada: 201 con el autor creado.
+# Si se lanza dos veces: 400, porque el email es UNIQUE (ER_DUP_ENTRY)
 POST {{baseUrl}}/api/autores
 Content-Type: application/json
 
 {
-    "nombre": "Ana Torres",
+    "nombre": "Ana Ruiz Torres",
     "email": "ana.torres@blog.com",
     "imagen": "https://i.pravatar.cc/300?img=5"
 }
 
 ### POST autor sin email -> 400
+# Comprueba la validación de validarAutor: falta el email obligatorio,
+# así que la petición no llega al controller ni a la base de datos.
+# Respuesta esperada: 400 con { message: 'Nombre y email son obligatorios' }
 POST {{baseUrl}}/api/autores
 Content-Type: application/json
 
 {
     "nombre": "Sin email"
 }
+
+#############
+# API POSTS #
+#############
+
+### GET todos los posts
+# Recupera todos los posts, cada uno con los datos completos de su autor
+# anidados en la propiedad "autor" (JOIN entre post y autor + formatearPost).
+# Ordenados del más reciente al más antiguo (ORDER BY fecha_creacion DESC).
+# Respuesta esperada: 200 con un array de posts
+GET {{baseUrl}}/api/posts
+
+### GET post por ID
+# Recupera un único post (con su autor) a partir del id de la URL.
+# El middleware existePost lo busca y lo guarda en req.post.
+# Respuesta esperada: 200 con el objeto del post y su autor
+GET {{baseUrl}}/api/posts/3
+
+### GET post que no existe -> 404
+# Comprueba que existePost corta la petición si el id no existe.
+# Respuesta esperada: 404 con { message: 'No existe el post con el id proporcionado' }
+GET {{baseUrl}}/api/posts/999
+
+### POST nuevo post
+# Crea un post nuevo asignado al autor con id 2.
+# validarPost comprueba los campos obligatorios y que el autor existe.
+# fecha_creacion no se envía: la rellena MySQL (DEFAULT CURRENT_TIMESTAMP).
+# Respuesta esperada: 201 con el post creado y los datos de su autor
+POST {{baseUrl}}/api/posts
+Content-Type: application/json
+
+{
+    "titulo": "Middlewares en Express 2",
+    "descripcion": "Qué son los middlewares y cómo usarlos para validar las peticiones.",
+    "categoria": "Backend",
+    "autor_id": 2
+}
+
+### POST con un autor que no existe -> 400
+# Comprueba que validarPost rechaza un autor_id que no existe
+# antes de intentar el INSERT (que fallaría por la clave foránea).
+# Respuesta esperada: 400 con { message: 'No existe el autor con el id proporcionado' }
+POST {{baseUrl}}/api/posts
+Content-Type: application/json
+
+{
+    "titulo": "Post huérfano",
+    "descripcion": "Este post no debería crearse",
+    "categoria": "Backend",
+    "autor_id": 99
+}
+
+### POST sin campos obligatorios -> 400
+# Comprueba que validarPost exige titulo, descripcion, categoria y autor_id.
+# Respuesta esperada: 400 con el mensaje de campos obligatorios
+POST {{baseUrl}}/api/posts
+Content-Type: application/json
+
+{
+    "titulo": "Solo título"
+}
+
+#######################
+# POSTS DE UN AUTOR   #
+#######################
+
+### GET todos los posts de un autor
+# Recupera todos los posts escritos por el autor de la URL (id 1),
+# cada uno con los datos de su autor.
+# Ruta: autores.routes -> comprobarId -> getPosts -> selectByAutorId
+# Respuesta esperada: 200 con los posts de Laura Martín
+GET {{baseUrl}}/api/autores/1/posts
+
+### GET posts de un autor que no existe -> 404
+# comprobarId corta la petición porque el autor 999 no existe.
+# Así se distingue "el autor no existe" de "el autor no tiene posts".
+# Respuesta esperada: 404 con { message: 'No existe el autor con ese id' }
+GET {{baseUrl}}/api/autores/999/posts
+
+### GET posts de un autor sin posts -> []
+# La autora 5 existe pero no ha escrito ningún post.
+# pero todavía no ha escrito ningún post.
+# Respuesta esperada: 200 con un array vacío []
+GET {{baseUrl}}/api/autores/5/posts

@@ -1,6 +1,14 @@
 import { selectById } from "../models/autores.model.js";
 
-const comrpobarId = async (req, res, next) => {
+/**
+ * Comprueba que el autor indicado en la URL existe en la base de datos.
+ * Si existe, lo guarda en req.autor para que lo use el controller.
+ * @param {import('express').Request} req - Petición de Express. Params: idAutor.
+ * @param {import('express').Response} res - Respuesta de Express.
+ * @param {import('express').NextFunction} next - Pasa al siguiente middleware o controller.
+ * @returns {Promise<void>} Responde con 404 si el autor no existe.
+ */
+const comprobarId = async (req, res, next) => {
     const { idAutor } = req.params;
     const autor = await selectById(idAutor);
     if (!autor) {
@@ -10,6 +18,13 @@ const comrpobarId = async (req, res, next) => {
     next();
 }
 
+/**
+ * Comprueba que el body trae los campos obligatorios para crear un autor (nombre y email).
+ * @param {import('express').Request} req - Petición de Express.
+ * @param {import('express').Response} res - Respuesta de Express.
+ * @param {import('express').NextFunction} next - Pasa al siguiente middleware o controller.
+ * @returns {Promise<void>} Responde con 400 si falta algún campo obligatorio.
+ */
 const validarAutor = async (req, res, next) => {
     const { nombre, email } = req.body ?? {};
     if (!nombre || !email) {
@@ -18,4 +33,4 @@ const validarAutor = async (req, res, next) => {
     next();
 }
 
-export { comrpobarId, validarAutor };
+export { comprobarId, validarAutor };
