@@ -1,115 +1,38 @@
-# Express Base Application for API Creation
+# API Blog - Actividad 8
 
-This is a basic Express application template designed to help you create APIs
-quickly. It includes essential configurations and setup for starting an Express
-server.
+API REST desarrollada con **Express** y **MySQL** para gestionar los **posts** de un blog y los **autores** que los escriben.
 
-> **⚠️ Note:** Since `v2.0.0` this template uses **ES Modules (ESM)** syntax
-> (`import`/`export`). If you need the legacy CommonJS version
-> (`require`/`module.exports`), clone the `v1.5.0-cjs` tag:
->
-> ```bash
-> git clone -b v1.5.0-cjs https://github.com/mariogiron/express-init-template.git project-name
-> ```
+## Instalación
 
-## Features
-
-- Basic Express server setup with **ES Modules**
-- CORS enabled
-- Native `.env` loading (`--env-file-if-exists`), no `dotenv`
-- Native file watching (`--watch`), no `nodemon`
-
-## Getting Started
-
-### Prerequisites
-
-Ensure you have Node.js (v22.9 or later) and npm installed on your machine. You can download them
-from [Node.js official website](https://nodejs.org/).
-
-### Installation
-
-1. **Clone the repository:**
+1. Instalar las dependencias:
 
 ```bash
-git clone https://github.com/mariogiron/express-init-template.git project-name
+pnpm install
 ```
 
-2. **Navigate to the project directory:**
+2. Crear la base de datos ejecutando el fichero `bbdd/blog.sql`. Crea la base de datos `blog`, las tablas `autor` y `post` y datos de prueba.
 
-```bash
-cd project-name
-```
-
-3. **Install the dependencies:**
-
-```bash
-npm install
-```
-
-### Environment Configuration
-
-Create a `.env` file in the root of the project and configure your environment
-variables. An example `.env` file might look like this:
+3. Crear el fichero `.env` a partir de `.env.example` y rellenar los datos de conexión:
 
 ```
 PORT=3000
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_PORT=3306
+DB_NAME=blog
 ```
 
-### Running the Application
-
-#### Start the server
-
-Start the server by running:
+4. Arrancar el servidor:
 
 ```bash
-npm start
+pnpm dev
 ```
 
-The server will start and listen on the port defined in your `.env` file, or
-default to port 3000 if not specified.
+Las peticiones de prueba están en el fichero `requests.http` (extensión REST Client de VS Code).
 
-#### Development mode
+## Base de datos
 
-To start the server in development mode with Node's native `--watch`, which will
-automatically restart the server on file changes, run:
-
-```bash
-npm run dev
-```
-
-### Available Scripts
-
-- **start**: Runs `node --env-file-if-exists=.env index.js` to start the server.
-- **dev**: Runs `node --env-file-if-exists=.env --watch index.js` to start the
-  server in development mode with automatic restarts on file changes.
-
-### Project Structure
-
-    ├── src
-    │   ├── app.js          # Express app configuration
-    │   ├── models          # Data models
-    │   ├── controllers     # Route controllers
-    │   ├── routes          # Application routes
-    ├── .env                # Environment variables
-    ├── index.js            # Server creation and configuration
-    ├── package.json        # Project metadata and dependencies
-
-### Adding Routes
-
-Routes are imported using ESM syntax. Remember to include the `.js` extension:
-
-```js
-// src/app.js
-import apiRoutes from "./routes/api.routes.js";
-app.use("/api", apiRoutes);
-```
-
-### Contributing
-
-Feel free to submit issues and pull requests to improve the project. For major
-changes, please open an issue first to discuss what you would like to change.
-
-### License
-
-This project is licensed under the MIT License - see the LICENSE file for
-details.
+- **autor**: id, nombre, email (único), imagen
+- **post**: id, titulo, descripcion, fecha_creacion, categoria, autor_id (clave externa a `autor.id`) 
